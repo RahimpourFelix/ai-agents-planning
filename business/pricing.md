@@ -208,10 +208,14 @@ Infrastructure decreases with scale, down to 0.001-0.002€
 A request to Knowlestry causes a cost of roughly 0.025-0.045€.
 
 ## Possible pricing per customer
+TODO: Update: personal reinrechnen
+TODO: Jeder request benötigt mehrere LLM calls (1 Agent = LLM call, günstiger Modelle, die Endantwort kmmt vom teueren MOdell)
+
+(includes costs + )
 
 Platform fee (base subscription for hosting, infra, monitoring):
 
-- Small: 300-500 € / month, 10 users included, 5k requests per month
+- Small: 300-500 € / month, 10 users included, 4k requests per month
 - Medium: 1000-1500 € / month, 30 users included, 20k requests per month
 - Large: 2500-4500 € / month, 100 users included, 60k requests per month
 
@@ -230,3 +234,62 @@ Research cycle:
 - Large: 3/year
 
 Extra cycle: 1000€ per GB
+
+## TODO
+
+=120000*1,5*10 = 1.8 
+10 Personen x 1600 Produktivstunden = ca ~112€/Stunde/pro Person = 1.792.000€ (Personalkosten)
+15 Personen x 1600 Produktivstunden = 2.688.000€ (Personalkosten)
+
+// Kosten / Requests * Tag
+=2680000/(100000*200) = 0,134
+
+
+Elena = CEO/Sales
+Stefan = KI Overlord/Ingestion/Knowledge Hub
+Kiryll = Ingestion/Knowledge Hub
+Ruslan = Intelligence
+Lok Tung = Intelligence/Trainings Data
+Christian = System Arch/Security
+Person 1 = MCP/A2A
+
+Person 3 = System Arch/Security
+Person 4 = Application/Connector
+Person 2 = Customizing/MCP/A2A
+
+(Student) Felix = Tech. Marketing/Webseite/Automatisierung (Hubspot)
+(Extern) Alexander = Kommunikation
+1/2 Person = Marketing
+
+
+Initiales Investment in Knowlestry Intelligence:
+4.000.000€ over 2 years
+Maintenance/Optimizing ~500.000/year
+
+Initiales Investment in Knowlestry Platform:
+4.100.000€ over 2 years
+
+Regelmäßig
+- LLM calls = 2.000.000€/Year
+- Cursor = 600€
+
+Dev (einmalig)
+- Hardware = 45000€
+- Yubikeys = 1500€
+
+Maintenance:
+
+Development Infrastructur ~10000/year
+Maintenance/Optimizing ~30000/year
+
+
+
+tagessatz 1600
+welche aufgaben müssten wie gemacht werden?
+maintenance aufgaben
+user pflege, monitor by user
+human resources
+customizing
+integration aufwand
+
+kosten für das aufsetzen von so einem system
