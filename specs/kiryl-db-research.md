@@ -1,6 +1,6 @@
 ---
 
-## Eliminated Options
+##  Eliminated Options
 
 ### Neo4j
 - URL: https://neo4j.com/
@@ -87,7 +87,6 @@
 - URL: https://falkordb.com/
 - GitHub: https://github.com/FalkorDB/FalkorDB
 - License: **Apache 2.0** — fully commercially usable ✅
-- Built specifically for **GraphRAG** use cases ✅
 - Native vector search (HNSW index) ✅
 - **OpenCypher compatible** — same query language as Neo4j ✅
 - Native multi-tenancy (multiple isolated graphs per instance) ✅
