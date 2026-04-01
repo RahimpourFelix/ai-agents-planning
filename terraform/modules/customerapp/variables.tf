@@ -8,6 +8,11 @@ variable "location" {
   type        = string
 }
 
+variable "domain" {
+  description = "Public domain name served by the customer app load balancer."
+  type        = string
+}
+
 variable "server_type" {
   description = "Hetzner server type for each customer app machine."
   type        = string

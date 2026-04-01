@@ -2,11 +2,12 @@
 
 This folder now starts with a generic Hetzner setup for Nuremberg:
 
-- one `LB11` load balancer
+- one `LB11` load balancer with TLS termination
 - one `CPX11` app server
 - one private network
 - one firewall on the servers
 - SSH access to the servers
+- one managed DNS zone and managed certificate for `knowlestry.com`
 
 The structure is ready to scale horizontally by increasing `instance_count`, which will add more `CPX11` machines behind the same load balancer.
 
@@ -98,7 +99,8 @@ The state object may not be visible in the bucket until Terraform has actually w
 ## Traffic Model
 
 - Public traffic enters through the load balancer on `443`
-- The load balancer forwards to the app servers on `customerapp.backend_port`
+- TLS terminates at the Hetzner load balancer using a managed certificate
+- The load balancer forwards plain HTTP to the app servers on `customerapp.backend_port`
 - App servers only allow app traffic from the private subnet
 - SSH is still open to the servers based on `ssh_allowed_cidrs`
 
@@ -109,6 +111,7 @@ The state object may not be visible in the bucket until Terraform has actually w
 - `hcloud_token`
 - `ssh_keys`
 - `location = "nbg1"`
+- `customerapp.domain = "knowlestry.com"`
 - `customerapp.server_type = "cpx21"` or another available server type
 - `customerapp.load_balancer_type = "lb11"`
 
@@ -132,7 +135,7 @@ The state object may not be visible in the bucket until Terraform has actually w
 
 ## Notes
 
-- This starter assumes your app will terminate TLS on the server and listen on `customerapp.backend_port`, which defaults to `443`.
+- This starter assumes TLS terminates on the Hetzner load balancer and the app listens on `customerapp.backend_port`, which now defaults to `80`.
 - Module-specific settings such as server type, load balancer type, instance count, image, and backend port are grouped under the root `customerapp` variable because `terraform.tfvars` only applies to the root module.
 - If your app listens on a different internal port, change `customerapp.backend_port`.
 - Each admin should have their own entry in `ssh_keys` so access can be added or removed cleanly without sharing private keys.

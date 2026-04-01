@@ -3,16 +3,17 @@ project_name           = "app"
 location               = "nbg1"
 network_zone           = "eu-central"
 customerapp = {
+  domain             = "knowlestry.com"
   server_type        = "cpx21"
   load_balancer_type = "lb11"
   instance_count     = 1
   image              = "ubuntu-24.04"
-  backend_port       = 443
+  backend_port       = 80
 }
 ssh_keys = [
   {
     name       = "grobmeier"
-    public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... grobmeier@example"
+    public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... grobmeier@knowlestry.com"
   },
   {
     name       = "second-admin"
@@ -25,11 +26,12 @@ ssh_allowed_cidrs      = ["0.0.0.0/0", "::/0"]
 
 # Optional cloud-init example:
 # customerapp = {
+#   domain             = "knowlestry.com"
 #   server_type        = "cpx21"
 #   load_balancer_type = "lb11"
 #   instance_count     = 1
 #   image              = "ubuntu-24.04"
-#   backend_port       = 443
+#   backend_port       = 80
 #   cloud_init = <<-EOT
 # #cloud-config
 # package_update: true

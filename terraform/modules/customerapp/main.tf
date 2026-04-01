@@ -1,6 +1,7 @@
 locals {
   load_balancer_name = "${var.project_name}-lb"
   firewall_name      = "${var.project_name}-app-fw"
+  certificate_name   = "${var.project_name}-lb-cert"
 }
 
 resource "hcloud_firewall" "app" {
@@ -67,12 +68,20 @@ resource "hcloud_load_balancer_network" "app" {
   network_id       = var.network_id
 }
 
+resource "hcloud_managed_certificate" "app" {
+  name         = local.certificate_name
+  domain_names = [var.domain]
+}
+
 resource "hcloud_load_balancer_service" "https" {
   load_balancer_id = hcloud_load_balancer.app.id
-  protocol         = "tcp"
+  protocol         = "https"
   listen_port      = 443
   destination_port = var.backend_port
-  proxyprotocol    = false
+
+  http {
+    certificates = [hcloud_managed_certificate.app.id]
+  }
 
   health_check {
     protocol = "tcp"

@@ -25,6 +25,7 @@ variable "network_zone" {
 variable "customerapp" {
   description = "Customer app stack settings passed into the customerapp module."
   type = object({
+    domain             = string
     server_type        = string
     load_balancer_type = string
     instance_count     = number
@@ -33,11 +34,12 @@ variable "customerapp" {
     cloud_init         = optional(string, "")
   })
   default = {
+    domain             = "knowlestry.com"
     server_type        = "cpx21"
     load_balancer_type = "lb11"
     instance_count     = 1
     image              = "ubuntu-24.04"
-    backend_port       = 443
+    backend_port       = 80
     cloud_init         = ""
   }
 }

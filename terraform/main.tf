@@ -27,11 +27,17 @@ resource "hcloud_network_subnet" "private" {
   ip_range     = var.subnet_ip_range
 }
 
+resource "hcloud_zone" "customerapp" {
+  name = var.customerapp.domain
+  mode = "primary"
+}
+
 module "customerapp" {
   source = "./modules/customerapp"
 
   project_name       = var.project_name
   location           = var.location
+  domain             = var.customerapp.domain
   server_type        = var.customerapp.server_type
   load_balancer_type = var.customerapp.load_balancer_type
   instance_count     = var.customerapp.instance_count
@@ -43,5 +49,17 @@ module "customerapp" {
   backend_port       = var.customerapp.backend_port
   cloud_init         = var.customerapp.cloud_init
 
-  depends_on = [hcloud_network_subnet.private]
+  depends_on = [
+    hcloud_network_subnet.private,
+    hcloud_zone.customerapp,
+  ]
+}
+
+resource "hcloud_zone_rrset" "customerapp_apex_a" {
+  zone = hcloud_zone.customerapp.name
+  name = "@"
+  type = "A"
+  records = [{
+    value = module.customerapp.load_balancer_ipv4
+  }]
 }
