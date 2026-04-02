@@ -37,6 +37,7 @@ variable "customerapp" {
     instance_count     = number
     image              = string
     backend_port       = number
+    cloud_init_file    = optional(string, "")
     cloud_init         = optional(string, "")
   })
   default = {
@@ -46,6 +47,7 @@ variable "customerapp" {
     instance_count     = 1
     image              = "ubuntu-24.04"
     backend_port       = 80
+    cloud_init_file    = ""
     cloud_init         = ""
   }
 }

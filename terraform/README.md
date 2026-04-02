@@ -165,9 +165,11 @@ customerapp = {
   instance_count     = 1
   image              = "ubuntu-24.04"
   backend_port       = 80
-  cloud_init         = file("cloud-init/chat-app-docker.yaml")
+  cloud_init_file    = "cloud-init/chat-app-docker.yaml"
 }
 ```
+
+Use `cloud_init_file` in `terraform.tfvars`, not `file(...)` directly. Terraform variable files only accept literal values, so the actual file loading is done inside the Terraform configuration.
 
 For your original placeholder, the main fixes were:
 

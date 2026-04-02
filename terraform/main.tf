@@ -5,6 +5,7 @@ provider "hcloud" {
 locals {
   network_name        = "${var.project_name}-net"
   customerapp_rr_name = trimsuffix(replace(var.customerapp.domain, ".${var.dns_zone}", ""), ".")
+  customerapp_cloud_init = var.customerapp.cloud_init_file != "" ? file(var.customerapp.cloud_init_file) : var.customerapp.cloud_init
 }
 
 resource "hcloud_ssh_key" "admin" {
@@ -48,7 +49,7 @@ module "customerapp" {
   ssh_allowed_cidrs  = var.ssh_allowed_cidrs
   subnet_ip_range    = var.subnet_ip_range
   backend_port       = var.customerapp.backend_port
-  cloud_init         = var.customerapp.cloud_init
+  cloud_init         = local.customerapp_cloud_init
 
   depends_on = [
     hcloud_network_subnet.private,
