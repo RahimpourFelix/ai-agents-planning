@@ -7,7 +7,8 @@ This folder now starts with a generic Hetzner setup for Nuremberg:
 - one private network
 - one firewall on the servers
 - SSH access to the servers
-- one managed DNS zone and managed certificate for `knowlestry.com`
+- one managed DNS zone for `knowlestry.com`
+- one managed certificate for `chat.knowlestry.com`
 
 The structure is ready to scale horizontally by increasing `instance_count`, which will add more `CPX11` machines behind the same load balancer.
 
@@ -111,7 +112,8 @@ The state object may not be visible in the bucket until Terraform has actually w
 - `hcloud_token`
 - `ssh_keys`
 - `location = "nbg1"`
-- `customerapp.domain = "knowlestry.com"`
+- `dns_zone = "knowlestry.com"`
+- `customerapp.domain = "chat.knowlestry.com"`
 - `customerapp.server_type = "cpx21"` or another available server type
 - `customerapp.load_balancer_type = "lb11"`
 
@@ -140,6 +142,38 @@ The state object may not be visible in the bucket until Terraform has actually w
 - If your app listens on a different internal port, change `customerapp.backend_port`.
 - Each admin should have their own entry in `ssh_keys` so access can be added or removed cleanly without sharing private keys.
 - `terraform.tfvars` is for normal Terraform variables like `hcloud_token` and `ssh_keys`, not for backend S3 credentials.
+
+## App Bootstrap
+
+The `customerapp.cloud_init` field can be used to run first-boot setup on each app server. A starter example is included at:
+
+- `cloud-init/chat-app-docker.yaml`
+
+It currently:
+
+- installs Docker from the official Docker apt repository
+- enables the Docker service
+- starts a placeholder container with `nginx:latest` on port `80`
+
+To use it, set this inside the `customerapp` object in `terraform.tfvars`:
+
+```hcl
+customerapp = {
+  domain             = "chat.knowlestry.com"
+  server_type        = "cpx22"
+  load_balancer_type = "lb11"
+  instance_count     = 1
+  image              = "ubuntu-24.04"
+  backend_port       = 80
+  cloud_init         = file("cloud-init/chat-app-docker.yaml")
+}
+```
+
+For your original placeholder, the main fixes were:
+
+- `nginx:latest` should be published as `-p 80:80`, not `-p 80:8080`
+- the Docker apt repository line is safer under `bash -lc`
+- `gnupg` should be present before managing apt key material
 
 ## Good Next Steps
 

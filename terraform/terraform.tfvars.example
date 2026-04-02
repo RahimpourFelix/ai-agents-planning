@@ -33,10 +33,5 @@ ssh_allowed_cidrs      = ["0.0.0.0/0", "::/0"]
 #   instance_count     = 1
 #   image              = "ubuntu-24.04"
 #   backend_port       = 80
-#   cloud_init = <<-EOT
-# #cloud-config
-# package_update: true
-# packages:
-#   - nginx
-# EOT
+#   cloud_init         = file("cloud-init/chat-app-docker.yaml")
 # }
