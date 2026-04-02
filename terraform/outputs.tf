@@ -25,6 +25,11 @@ output "private_network_id" {
 
 output "customerapp_domain" {
   description = "Domain name configured for the customer app."
+  value       = var.customerapp.domain
+}
+
+output "dns_zone" {
+  description = "Hetzner DNS zone managed for this stack."
   value       = hcloud_zone.customerapp.name
 }
 

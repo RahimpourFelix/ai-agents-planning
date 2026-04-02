@@ -3,7 +3,8 @@ provider "hcloud" {
 }
 
 locals {
-  network_name = "${var.project_name}-net"
+  network_name        = "${var.project_name}-net"
+  customerapp_rr_name = trimsuffix(replace(var.customerapp.domain, ".${var.dns_zone}", ""), ".")
 }
 
 resource "hcloud_ssh_key" "admin" {
@@ -28,7 +29,7 @@ resource "hcloud_network_subnet" "private" {
 }
 
 resource "hcloud_zone" "customerapp" {
-  name = var.customerapp.domain
+  name = var.dns_zone
   mode = "primary"
 }
 
@@ -57,7 +58,7 @@ module "customerapp" {
 
 resource "hcloud_zone_rrset" "customerapp_apex_a" {
   zone = hcloud_zone.customerapp.name
-  name = "@"
+  name = local.customerapp_rr_name != var.customerapp.domain ? local.customerapp_rr_name : "@"
   type = "A"
   records = [{
     value = module.customerapp.load_balancer_ipv4

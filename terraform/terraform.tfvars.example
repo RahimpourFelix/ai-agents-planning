@@ -2,8 +2,9 @@ hcloud_token           = "replace-me"
 project_name           = "app"
 location               = "nbg1"
 network_zone           = "eu-central"
+dns_zone               = "knowlestry.com"
 customerapp = {
-  domain             = "knowlestry.com"
+  domain             = "chat.knowlestry.com"
   server_type        = "cpx21"
   load_balancer_type = "lb11"
   instance_count     = 1
@@ -26,7 +27,7 @@ ssh_allowed_cidrs      = ["0.0.0.0/0", "::/0"]
 
 # Optional cloud-init example:
 # customerapp = {
-#   domain             = "knowlestry.com"
+#   domain             = "chat.knowlestry.com"
 #   server_type        = "cpx21"
 #   load_balancer_type = "lb11"
 #   instance_count     = 1

@@ -22,6 +22,12 @@ variable "network_zone" {
   default     = "eu-central"
 }
 
+variable "dns_zone" {
+  description = "Hetzner DNS zone managed for this stack."
+  type        = string
+  default     = "knowlestry.com"
+}
+
 variable "customerapp" {
   description = "Customer app stack settings passed into the customerapp module."
   type = object({
@@ -34,7 +40,7 @@ variable "customerapp" {
     cloud_init         = optional(string, "")
   })
   default = {
-    domain             = "knowlestry.com"
+    domain             = "chat.knowlestry.com"
     server_type        = "cpx21"
     load_balancer_type = "lb11"
     instance_count     = 1
