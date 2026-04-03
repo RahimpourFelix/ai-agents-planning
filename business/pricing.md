@@ -288,6 +288,16 @@ tagessatz 1600
 welche aufgaben müssten wie gemacht werden?
 maintenance aufgaben
 user pflege, monitor by user
+
+
+
+Edit by Elena: 
+AI pricing must be coumpunded differntly: https://www.productmanagement.ai/p/the-ai-product-pricing-masterclass
+Variance > averages
+Behavior > users
+Workflows > requests
+Peak > mean
+System dynamics > static KPIs
 human resources
 customizing
 integration aufwand
