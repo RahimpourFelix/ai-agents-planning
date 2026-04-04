@@ -1,7 +1,7 @@
 This document describes the relevant and first ideas of technical and business metrics for Knowlestry Platfrom (in the development and operation mode on site)
 Knowlestry Analytics is highly related to LLM/AI/Dev-Ops & resulting strategies for the product development and pricing strategies. 
 
-Core Insight (What drives the metrics) 
+# Core Insight (What drives the metrics) 
 --> AI costs are variable, behavioral, and compounding
 --> Variance (not averages) breaks systems
 --> Pricing = system control mechanism, not just monetization
@@ -13,7 +13,8 @@ So our metrics must:
 
 
 
-A. Business Metrics (Pricing + Unit Economics) --> Revenue is behavioral, not fixed like SaaS
+# A. Business Metrics (Pricing + Unit Economics) --> Revenue is behavioral, not fixed like SaaS
+
 Some Most Important Business Metrics:
     – p95 cost per request
     – Contribution margin per user segment
@@ -21,7 +22,7 @@ Some Most Important Business Metrics:
     – Peak concurrency cost
     – Heavy user cost concentration (%)
 
-Pricing Model Effectiveness:
+# Pricing Model Effectiveness:
 Hybrid-pricing (Pricing must shape behavior, not just capture value)
     – % users exceeding included quota
     – Subsidization ratio (heavy vs light users)
@@ -65,7 +66,7 @@ Break down COGS into:
     – Concurrency provisioning cost
     – Monitoring & evaluation cost
 
-Some Practical Business Metrics: 
+# Some Practical Business Metrics: 
 1. Economics
     – Fully-loaded cost per request
     – Revenue per request
@@ -87,6 +88,59 @@ Some Practical Business Metrics:
     – Retry rate
     – Latency under load
 
+
+# B. Technical Metrics (System + Model Level)
+Cost & Inference Efficiency (These map to “model execution + context + routing”) --> Average cost is misleading; tail cost matters more
+    – Cost per request (avg, p90, p95)
+    – Cost per successful outcome
+    – Token per request (input/output split)
+    – Context size growth rate (%)
+    – Model routing distribution (%)
+        % requests on cheap vs expensive models
+    – Cost per workflow (not per call)
+
+Variance & Tail Risk (CRITICAL) --> AI systems fail on variance, not averages
+    – Cost variance (std dev / CV)
+    – p95 / p99 cost ratio vs median
+    – Worst-case cost per user/session
+    – Retry amplification factor
+        (total calls ÷ initial requests)
+    – Heavy user cost concentration (%)
+        e.g. top 5% users = X% of cost
+
+Orchestration & Workflow Complexity --> (One request → multiple hidden costs (planner, validator, etc.))
+    – Calls per user action
+    – Retry rate (%)
+    – Fallback rate to larger models (%)
+    – Workflow depth (steps per request)
+    – Latency per step + total latency
+
+Retrieval & Context Efficiency (Poor retrieval multiplies downstream cost)
+    – Retrieval hit rate (useful vs unused context)
+    – Average retrieved tokens vs used tokens
+    – Context bloat ratio
+    – Cost per retrieval operation
+    – Latency added by retrieval
+
+Concurrency & Infrastructure (AI cost is driven by peaks, not averages)
+    – Peak concurrent requests
+    – Concurrency utilization (%)
+    – Cost per peak vs average load
+    – Queue time / wait time
+    – Overprovisioning cost (%)
+
+Quality, Reliability & Stability (Stability requires extra compute (retries, validation) → must be measured)
+    – Success rate / task completion rate
+    – Error rate / hallucination rate
+    – Retry-induced success rate
+    – Consistency score (same input → same output)
+    – Guardrail trigger rate
+
+Monitoring & Evaluation Overhead (These are structural costs, not optional)
+    – Cost of evaluation per request
+    – Logging/storage cost per interaction
+    – Human-in-the-loop rate (%)
+    – Model drift detection frequency
 
 
 
