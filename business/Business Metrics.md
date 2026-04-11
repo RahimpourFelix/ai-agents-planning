@@ -1,22 +1,4 @@
-Key AI pricing strategies:
 
-* base subscription + usage/outcome tiers only for early stage companies, because many uncertainties.
-* Every call, every token, every inference has a known cost
-* tokens work for technical buyers but confuse everyone else --\> how about Knowkens?
-* Value-based pricing / outcome based pricing would be good.
-* AI economics are different from SaaS --\> COGS matter (Cost of goods sold)
-  * Compute & inference costs + Customer support (Humans)
-* Every AI query incurs real compute.
-* Know real ROI (the value for the customer we generate?)
-  * Knowledge Hub:
-    * Qualification of Data with Agents vs. manually
-    * Sustain the knowledge
-* Pricing should be tailored to our industry, our customer's workflows, the concrete outcomes our product delivers, and the cost structure required to ensure profitable growth.
-* Open questions:
-  * What's our go-to-market motion?
-  * What's the unit of value our pricing can scale with?
-  * How do we determine a customer's willingness to pay?
-  * How do we design a pricing model that's flexible and scalable—delivering value at each stage of customer growth without causing sticker shock?
 
 \--\> The pricing should consider:
 
