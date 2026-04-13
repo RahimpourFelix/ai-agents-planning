@@ -1,1 +1,58 @@
-UI and Interaction Metrics
+This document decscribes how our Knowlestry Platform (UI / User and Agents Interaction, also with Custom Agents, etc.) should deliver the best user expereince. 
+
+Which companies are part of the target audience?
+    – Component Manufacturers
+        Examples: Electric motor manufacturers, brake suppliers, pneumatic component producers, etc.
+    – Machine Manufacturers
+        Examples: Builders of CNC machines, robotic assembly lines, or industrial packaging systems
+    – Plant Manufacturers
+        Examples: Companies that design and build production facilities or specialized process plants.
+    – Factory Operators​
+        Examples: Operators with production lines for automotive parts, consumer goods, or electronics manufacturing services (EMS), etc.
+
+
+Who is the Target User:
+    – Power User:
+        Engineers or "domain experts" – these users are with technical background and have mostly coomplex scenarious.
+        Users typically interact with our platform in a variety of situations and use it in many different ways. 
+    – "Simple" User: 
+        These users prefer less frequent and much simpler interactions with our platform and our Agents or Custom Agents. 
+
+    --> As a general rule, all users—whether power users or regular users—fall into these groups:
+        – Engineering or Technical Experts (high level of domain understanding);
+        – Technical Stuff (high level of specific process or machine understanding);
+        – Data Science or IT Employees
+        – Management Level
+        – Employees from different departments (Sales, Marketing, HR, Administratives, etc.)
+    
+Which agents are our customers asking about: 
+    Agent Fleet:
+        MachineIQ: General or specific Machine Data Analysis typicall use cases:
+            Condition Monitoring or Co2 Analysis, Audit, etc. 
+        OptimizeAI: QS/QM, Process Optimizaion, Parameter Estimation, Energy or Throughput Efficiency 
+        InsightAI: Rout Cause Analysis, Downtime Prediction;
+        MaintainAI: Predictive Mentanence, Wear Detection;
+        OnboardAI: Training and Onboarding to improve Employee Productivity​
+        SupportAI: TAfter-Sales Support and Technical Troubleshooting 
+        InnovateAI: Operational Efficiency and Rapid-Cycle Innovation​
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
