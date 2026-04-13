@@ -1,0 +1,49 @@
+hcloud_token = "replace-me"
+project_name = "mlflow"
+location     = "nbg1"
+network_zone = "eu-central"
+
+ssh_allowed_cidrs = [
+  "203.0.113.10/32",
+]
+
+ssh_keys = [
+  {
+    name       = "primary-admin"
+    public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... primary-admin@example"
+  },
+]
+
+object_storage = {
+  endpoint   = "https://nbg1.your-objectstorage.com"
+  bucket     = "knowlestry-mlflow-artifacts"
+  access_key = "replace-me"
+  secret_key = "replace-me"
+  region     = "main"
+}
+
+mlflow = {
+  server_type         = "cpx21"
+  image               = "ubuntu-24.04"
+  port                = 5000
+  version             = "3.5.0"
+  public_ipv4_enabled = true
+  public_ipv6_enabled = false
+  cloud_init_file     = "cloud-init/mlflow.yaml"
+}
+
+postgres = {
+  server_type           = "cpx21"
+  image                 = "ubuntu-24.04"
+  version               = 16
+  volume_size           = 50
+  volume_format         = "ext4"
+  database_name         = "mlflow"
+  database_user         = "mlflow"
+  database_password     = "replace-me"
+  backup_schedule       = "17 3 * * *"
+  backup_retention_days = 7
+  public_ipv4_enabled   = false
+  public_ipv6_enabled   = false
+  cloud_init_file       = "cloud-init/postgres.yaml"
+}

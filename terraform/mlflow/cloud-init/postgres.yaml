@@ -1,0 +1,122 @@
+#cloud-config
+package_update: true
+packages:
+  - awscli
+  - postgresql-${postgres_version}
+  - postgresql-client-${postgres_version}
+  - postgresql-contrib
+
+write_files:
+  - path: /usr/local/bin/setup-postgres-data-volume.sh
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      device="${postgres_data_device}"
+      mount_point="${postgres_data_mount}"
+
+      for _ in $(seq 1 60); do
+        if [[ -b "$device" ]]; then
+          break
+        fi
+        sleep 2
+      done
+
+      if [[ ! -b "$device" ]]; then
+        echo "PostgreSQL volume device not found: $device" >&2
+        exit 1
+      fi
+
+      mkdir -p "$mount_point"
+
+      if ! blkid "$device" >/dev/null 2>&1; then
+        mkfs.ext4 -F "$device"
+      fi
+
+      uuid="$(blkid -s UUID -o value "$device")"
+      if ! grep -q "$uuid" /etc/fstab; then
+        echo "UUID=$uuid $mount_point ext4 defaults,nofail,discard 0 2" >> /etc/fstab
+      fi
+
+      mountpoint -q "$mount_point" || mount "$mount_point"
+      chown postgres:postgres "$mount_point"
+      chmod 700 "$mount_point"
+
+  - path: /usr/local/bin/bootstrap-postgres.sh
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      version="${postgres_version}"
+      mount_point="${postgres_data_mount}"
+      private_ip="$(hostname -I | awk '{print $1}')"
+      data_dir="$mount_point/$version/main"
+      hba_file="/etc/postgresql/$version/main/pg_hba.conf"
+      conf_file="/etc/postgresql/$version/main/postgresql.conf"
+
+      systemctl stop postgresql || true
+
+      /usr/local/bin/setup-postgres-data-volume.sh
+
+      if pg_lsclusters --no-header 2>/dev/null | grep -q "^$version "; then
+        pg_dropcluster --stop "$version" main
+      fi
+
+      install -d -m 0700 -o postgres -g postgres "$mount_point/$version"
+      pg_createcluster --datadir="$data_dir" "$version" main
+
+      sed -i "s/^#\\?port = .*/port = ${postgres_port}/" "$conf_file"
+      sed -i "s/^#\\?listen_addresses = .*/listen_addresses = '127.0.0.1,$private_ip'/" "$conf_file"
+      sed -i "s/^#\\?password_encryption = .*/password_encryption = 'scram-sha-256'/" "$conf_file" || true
+
+      cat <<EOF >> "$hba_file"
+      host    ${postgres_database}    ${postgres_user}    ${postgres_allowed_cidr}    scram-sha-256
+      EOF
+
+      systemctl restart postgresql
+
+      sudo -u postgres psql <<'SQL'
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${postgres_user}') THEN
+          CREATE ROLE ${postgres_user} LOGIN PASSWORD '${postgres_password}';
+        ELSE
+          ALTER ROLE ${postgres_user} WITH LOGIN PASSWORD '${postgres_password}';
+        END IF;
+      END
+      $$;
+      SQL
+
+      sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname = '${postgres_database}'" | grep -q 1 || \
+        sudo -u postgres createdb --owner=${postgres_user} ${postgres_database}
+
+  - path: /usr/local/bin/backup-postgres.sh
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      export AWS_ACCESS_KEY_ID="${object_storage_key}"
+      export AWS_SECRET_ACCESS_KEY="${object_storage_secret}"
+      export AWS_DEFAULT_REGION="${object_storage_region}"
+
+      backup_dir="/var/backups/postgresql"
+      timestamp="$(date +%Y%m%d-%H%M%S)"
+      backup_file="$backup_dir/${postgres_database}-$timestamp.dump"
+
+      install -d -m 0700 "$backup_dir"
+
+      sudo -u postgres pg_dump --format=custom --dbname=${postgres_database} --file="$backup_file"
+      aws --endpoint-url "${object_storage_endpoint}" s3 cp "$backup_file" "s3://${object_storage_bucket}/postgres/$(hostname -s)/$(basename "$backup_file")"
+      find "$backup_dir" -type f -mtime +${backup_retention_days} -delete
+
+  - path: /etc/cron.d/postgres-backup
+    permissions: "0644"
+    content: |
+      ${backup_schedule} root /usr/local/bin/backup-postgres.sh >> /var/log/postgres-backup.log 2>&1
+
+runcmd:
+  - bash -lc 'until getent passwd postgres >/dev/null; do sleep 1; done'
+  - /usr/local/bin/bootstrap-postgres.sh

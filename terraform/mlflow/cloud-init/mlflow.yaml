@@ -1,0 +1,92 @@
+#cloud-config
+package_update: true
+packages:
+  - ca-certificates
+  - curl
+  - gnupg
+
+write_files:
+  - path: /opt/mlflow/Dockerfile
+    permissions: "0644"
+    content: |
+      FROM python:3.12-slim
+
+      RUN pip install --no-cache-dir \
+          mlflow==${mlflow_version} \
+          psycopg2-binary \
+          boto3
+
+  - path: /opt/mlflow/compose.yaml
+    permissions: "0644"
+    content: |
+      services:
+        mlflow:
+          build:
+            context: /opt/mlflow
+            dockerfile: Dockerfile
+          env_file:
+            - /opt/mlflow/.env
+          ports:
+            - "${mlflow_port}:${mlflow_port}"
+          restart: unless-stopped
+          command:
+            - /bin/sh
+            - -lc
+            - >
+              mlflow server
+              --host 0.0.0.0
+              --port "$${MLFLOW_PORT}"
+              --backend-store-uri "$${MLFLOW_BACKEND_STORE_URI}"
+              --artifacts-destination "$${MLFLOW_ARTIFACTS_DESTINATION}"
+              --serve-artifacts
+
+  - path: /opt/mlflow/.env
+    permissions: "0600"
+    content: |
+      MLFLOW_PORT=${mlflow_port}
+      MLFLOW_BACKEND_STORE_URI=postgresql+psycopg2://${postgres_user}:${postgres_password}@${postgres_host}:${postgres_port}/${postgres_database}
+      MLFLOW_ARTIFACTS_DESTINATION=s3://${object_storage_bucket}
+      MLFLOW_S3_ENDPOINT_URL=${object_storage_endpoint}
+      AWS_ENDPOINT_URL_S3=${object_storage_endpoint}
+      AWS_DEFAULT_REGION=${object_storage_region}
+      AWS_ACCESS_KEY_ID=${object_storage_key}
+      AWS_SECRET_ACCESS_KEY=${object_storage_secret}
+
+  - path: /usr/local/bin/check-mlflow.sh
+    permissions: "0755"
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      curl -fsS http://127.0.0.1:${mlflow_port}/ >/dev/null
+
+  - path: /etc/systemd/system/mlflow.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=MLflow Tracking Server
+      Requires=docker.service
+      After=docker.service network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      WorkingDirectory=/opt/mlflow
+      ExecStart=/usr/bin/docker compose --project-directory /opt/mlflow up --build -d
+      ExecStop=/usr/bin/docker compose --project-directory /opt/mlflow down
+      TimeoutStartSec=0
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - install -m 0755 -d /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - chmod a+r /etc/apt/keyrings/docker.asc
+  - bash -lc 'echo "deb [arch=$$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $$(. /etc/os-release && echo $$VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list'
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  - systemctl enable --now docker
+  - systemctl daemon-reload
+  - systemctl enable --now mlflow.service
+  - bash -lc 'for _ in $$(seq 1 30); do /usr/local/bin/check-mlflow.sh && exit 0; sleep 2; done; exit 1'
