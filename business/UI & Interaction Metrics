@@ -36,8 +36,24 @@ Which agents are our customers asking about:
         SupportAI: TAfter-Sales Support and Technical Troubleshooting 
         InnovateAI: Operational Efficiency and Rapid-Cycle Innovation​
 
+# Best practices for UI and interaction between humans and AI agents involve shifting from static, click-driven interfaces to agentic, goal-oriented experiences where AI acts as a proactive collaborator.
+    --> UI must evolve into an "accountability layer" that provides transparency, control, and efficient error recovery
+
+# Intent-Driven Interaction (Move Beyond Clicking) 
+    --> Describe, Don't Click: Design interfaces that allow users to express goals (e.g., "Create a marketing report") rather than just clicking buttons. The agent acts on intent, breaking the goal into plans.
+    – Intent Capture Rate (ICR = (# sessions with natural language goal input) / (total sessions))
+        What it measures: How often users express goals vs. using UI controls. Count sessions where users type or say phrases like “create…”, “analyze…”, “generate…”
+    – Intent Success Rate (ISR = (# intents completed successfully) / (total intents submitted))
+        How often the system successfully fulfills a user’s stated intent. Task completed without manual correction.
+    – Time-to-Intent Completion (TIC = avg(time from intent submission → task completion))
+        Efficiency of translating intent into outcome. Lower = better agent planning and execution.
+    – Steps per Outcome (SPO = avg(# interactions required to complete a task))
+        Friction reduction compared to traditional UI flows. Intent-driven systems should drastically reduce this.
+    – 
 
 
+--> Proactive Nudges: Agents should identify needs before users articulate them—suggesting actions, drafting content, or identifying potential issues—without being intrusive.
+--> Multimodal Inputs: Allow users to switch seamlessly between voice, text, and visual inputs (e.g., uploading a sketch) based on their context.
 
 
 
